@@ -2,6 +2,9 @@
 
 # TripTrail API Test Script
 # This script tests all available API endpoints
+#
+# NOTE: This script uses hard-coded test credentials for demonstration purposes.
+# In a production environment, use environment variables or a secure configuration file.
 
 BASE_URL="http://localhost:5000"
 

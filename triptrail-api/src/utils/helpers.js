@@ -30,12 +30,15 @@ export const isValidEmail = (email) => {
     return regex.test(email);
 };
 
+import crypto from 'crypto';
+
 /**
- * Generate unique ID
+ * Generate unique ID using crypto for better security
  * @returns {string} Unique ID string
  */
 export const generateUniqueId = () => {
-    return 'id-' + Math.random().toString(36).substr(2, 16);
+    // Use crypto for cryptographically secure random IDs
+    return 'id-' + crypto.randomBytes(8).toString('hex');
 };
 
 /**
