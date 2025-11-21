@@ -8,13 +8,13 @@ export const mockUsers = [
         userId: '1',
         username: 'john_doe',
         email: 'john@example.com',
-        password: '$2a$10$8K1p/a0dL3LzRyqGe.hKaehJ4P5mXPPz0zWpGGH7qyMgGFY4cYGka' // hashed: password123
+        password: '$2a$10$p.hECilDoOn5jXtDTdklWe38qmkY/qz73Cf.WafXQ8znVxTao/s1G' // hashed: password123
     },
     {
         userId: '2',
         username: 'jane_smith',
         email: 'jane@example.com',
-        password: '$2a$10$8K1p/a0dL3LzRyqGe.hKaehJ4P5mXPPz0zWpGGH7qyMgGFY4cYGka' // hashed: password456
+        password: '$2a$10$tTtXYS8te0Hk3RAmnzEVPuNoR3d0laRRa7CqBOrO4GXmrPAyorln.' // hashed: password456
     }
 ];
 
