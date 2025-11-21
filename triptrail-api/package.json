@@ -2,6 +2,7 @@
   "name": "triptrail",
   "version": "1.0.0",
   "description": "A REST API for generating and managing trip plans.",
+  "type": "module",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",

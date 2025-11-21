@@ -6,18 +6,18 @@ import {
   deleteTripPlan
 } from '../controllers/tripPlanController.js';
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 // Create a new trip plan
-router.post('/user/:userId/tripPlan', createTripPlan);
+router.post('/', createTripPlan);
 
 // Get trip plan by ID
-router.get('/user/:userId/tripPlan/:tripId', getTripPlan);
+router.get('/:tripId', getTripPlan);
 
 // Update trip plan by ID
-router.put('/user/:userId/tripPlan/:tripId', updateTripPlan);
+router.put('/:tripId', updateTripPlan);
 
 // Delete trip plan
-router.delete('/user/:userId/tripPlan/:tripId', deleteTripPlan);
+router.delete('/:tripId', deleteTripPlan);
 
 export default router;

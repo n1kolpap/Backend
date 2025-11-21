@@ -1,6 +1,5 @@
-import TripPlan from '../models/TripPlan.js';
-import User from '../models/User.js';
-import { handleResponse } from '../utils/responses.js';
+import * as tripPlanService from '../services/tripPlanService.js';
+import { handleResponse, handleError, successResponse } from '../utils/responses.js';
 
 /**
  * Create a new trip plan
@@ -11,18 +10,12 @@ export const createTripPlan = async (req, res) => {
     try {
         const { userId } = req.params;
         const tripPlanData = req.body;
+        const useMockData = req.app.get('useMockData');
 
-        const user = await User.findById(userId);
-        if (!user) {
-            return handleResponse(res, 404, null, 'User not found');
-        }
-
-        const tripPlan = new TripPlan({ ...tripPlanData, userId });
-        await tripPlan.save();
-
-        return handleResponse(res, 201, tripPlan, 'Trip plan created successfully');
+        const tripPlan = await tripPlanService.createTripPlan(userId, tripPlanData, useMockData);
+        return successResponse(res, 201, tripPlan, 'Trip plan created successfully');
     } catch (error) {
-        return handleResponse(res, 400, null, error.message);
+        return handleError(res, error);
     }
 };
 
@@ -34,15 +27,12 @@ export const createTripPlan = async (req, res) => {
 export const getTripPlan = async (req, res) => {
     try {
         const { userId, tripId } = req.params;
+        const useMockData = req.app.get('useMockData');
 
-        const tripPlan = await TripPlan.findOne({ _id: tripId, userId });
-        if (!tripPlan) {
-            return handleResponse(res, 404, null, 'Trip plan not found');
-        }
-
-        return handleResponse(res, 200, tripPlan, 'Trip plan retrieved successfully');
+        const tripPlan = await tripPlanService.getTripPlanById(userId, tripId, useMockData);
+        return successResponse(res, 200, tripPlan, 'Trip plan retrieved successfully');
     } catch (error) {
-        return handleResponse(res, 400, null, error.message);
+        return handleError(res, error);
     }
 };
 
@@ -55,15 +45,12 @@ export const updateTripPlan = async (req, res) => {
     try {
         const { userId, tripId } = req.params;
         const updatedData = req.body;
+        const useMockData = req.app.get('useMockData');
 
-        const tripPlan = await TripPlan.findOneAndUpdate({ _id: tripId, userId }, updatedData, { new: true });
-        if (!tripPlan) {
-            return handleResponse(res, 404, null, 'Trip plan not found');
-        }
-
-        return handleResponse(res, 200, tripPlan, 'Trip plan updated successfully');
+        const tripPlan = await tripPlanService.updateTripPlan(userId, tripId, updatedData, useMockData);
+        return successResponse(res, 200, tripPlan, 'Trip plan updated successfully');
     } catch (error) {
-        return handleResponse(res, 400, null, error.message);
+        return handleError(res, error);
     }
 };
 
@@ -75,14 +62,11 @@ export const updateTripPlan = async (req, res) => {
 export const deleteTripPlan = async (req, res) => {
     try {
         const { userId, tripId } = req.params;
+        const useMockData = req.app.get('useMockData');
 
-        const tripPlan = await TripPlan.findOneAndDelete({ _id: tripId, userId });
-        if (!tripPlan) {
-            return handleResponse(res, 404, null, 'Trip plan not found');
-        }
-
-        return handleResponse(res, 204, null, 'Trip plan deleted successfully');
+        await tripPlanService.deleteTripPlan(userId, tripId, useMockData);
+        return successResponse(res, 200, null, 'Trip plan deleted successfully');
     } catch (error) {
-        return handleResponse(res, 400, null, error.message);
+        return handleError(res, error);
     }
 };

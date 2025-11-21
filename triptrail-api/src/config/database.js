@@ -1,6 +1,12 @@
-const mongoose = require('mongoose');
-require('dotenv').config();
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
+dotenv.config();
+
+/**
+ * Connect to MongoDB database
+ * @returns {Promise<void>}
+ */
 const connectDB = async () => {
     try {
         const dbURI = process.env.MONGO_URI || 'mongodb://localhost:27017/triptrail';
@@ -15,4 +21,4 @@ const connectDB = async () => {
     }
 };
 
-module.exports = connectDB;
+export default connectDB;

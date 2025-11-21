@@ -1,29 +1,52 @@
-import Activity from '../models/Activity.js';
 import DailyPlan from '../models/DailyPlan.js';
-import { handleError, handleSuccess } from '../utils/responses.js';
+import { mockDailyPlans } from '../config/mockData.js';
+import { handleError, successResponse } from '../utils/responses.js';
+import { generateUniqueId } from '../utils/helpers.js';
 
 /**
  * Add an activity to the daily plan.
  * @param {Object} req - The request object.
  * @param {Object} res - The response object.
  */
-export const addActivity = async (req, res) => {
+export const addActivityToDailyPlan = async (req, res) => {
     try {
         const { userId, tripId, date } = req.params;
-        const { name, location, day, time } = req.body;
+        const activityData = req.body;
+        const useMockData = req.app.get('useMockData');
 
-        const activity = new Activity({ name, location, day, time });
-        await activity.save();
+        if (useMockData) {
+            const dailyPlan = mockDailyPlans.find(d => d.tripId === tripId && d.date === date);
+            if (!dailyPlan) {
+                // Create new daily plan if not exists
+                const newDailyPlan = {
+                    tripId,
+                    date,
+                    activities: [{
+                        activityId: generateUniqueId(),
+                        ...activityData
+                    }]
+                };
+                mockDailyPlans.push(newDailyPlan);
+                return successResponse(res, 201, newDailyPlan, 'Activity added successfully');
+            }
+            
+            const newActivity = {
+                activityId: generateUniqueId(),
+                ...activityData
+            };
+            dailyPlan.activities.push(newActivity);
+            return successResponse(res, 201, dailyPlan, 'Activity added successfully');
+        }
 
         const dailyPlan = await DailyPlan.findOneAndUpdate(
-            { userId, tripId, date },
-            { $push: { activities: activity._id } },
+            { tripId, date },
+            { $push: { activities: { activityId: generateUniqueId(), ...activityData } } },
             { new: true, upsert: true }
         );
 
-        handleSuccess(res, 201, { dailyPlan });
+        return successResponse(res, 201, dailyPlan, 'Activity added successfully');
     } catch (error) {
-        handleError(res, error);
+        return handleError(res, error);
     }
 };
 
@@ -32,19 +55,38 @@ export const addActivity = async (req, res) => {
  * @param {Object} req - The request object.
  * @param {Object} res - The response object.
  */
-export const removeActivity = async (req, res) => {
+export const removeActivityFromDailyPlan = async (req, res) => {
     try {
         const { userId, tripId, date, activityId } = req.params;
+        const useMockData = req.app.get('useMockData');
 
-        await DailyPlan.findOneAndUpdate(
-            { userId, tripId, date },
-            { $pull: { activities: activityId } }
+        if (useMockData) {
+            const dailyPlan = mockDailyPlans.find(d => d.tripId === tripId && d.date === date);
+            if (!dailyPlan) {
+                throw new Error('Daily plan not found');
+            }
+            
+            const activityIndex = dailyPlan.activities.findIndex(a => a.activityId === activityId);
+            if (activityIndex === -1) {
+                throw new Error('Activity not found');
+            }
+            
+            dailyPlan.activities.splice(activityIndex, 1);
+            return successResponse(res, 200, dailyPlan, 'Activity removed successfully');
+        }
+
+        const dailyPlan = await DailyPlan.findOneAndUpdate(
+            { tripId, date },
+            { $pull: { activities: { activityId } } },
+            { new: true }
         );
 
-        await Activity.findByIdAndDelete(activityId);
+        if (!dailyPlan) {
+            throw new Error('Daily plan not found');
+        }
 
-        handleSuccess(res, 204);
+        return successResponse(res, 200, dailyPlan, 'Activity removed successfully');
     } catch (error) {
-        handleError(res, error);
+        return handleError(res, error);
     }
 };

@@ -1,7 +1,12 @@
 import express from 'express';
-import { viewDailyPlan } from '../controllers/dailyPlanController.js';
+import { 
+  viewDailyPlan, 
+  createDailyPlan,
+  updateDailyPlan,
+  deleteDailyPlan
+} from '../controllers/dailyPlanController.js';
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 /**
  * @swagger
@@ -9,31 +14,22 @@ const router = express.Router();
  *   get:
  *     tags:
  *       - DailyPlan
- *     summary: View daily plan
- *     parameters:
- *       - name: userId
- *         in: path
- *         required: true
- *         description: ID of the user
- *         schema:
- *           type: string
- *       - name: tripId
- *         in: path
- *         required: true
- *         description: ID of the trip plan
- *         schema:
- *           type: string
+ *     summary: View daily plans for a trip
  *     responses:
  *       200:
- *         description: Daily plan found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/DailyPlan'
- *       404:
- *         description: Failed to find requested daily plan
+ *         description: Daily plans found
  */
 
-router.get('/:userId/tripPlan/:tripId/dailyPlan', viewDailyPlan);
+// Get all daily plans for a trip
+router.get('/', viewDailyPlan);
+
+// Create a new daily plan
+router.post('/', createDailyPlan);
+
+// Update a daily plan by date
+router.put('/:date', updateDailyPlan);
+
+// Delete a daily plan by date
+router.delete('/:date', deleteDailyPlan);
 
 export default router;

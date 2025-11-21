@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const activitySchema = new mongoose.Schema({
   activityId: {
@@ -23,6 +23,10 @@ const activitySchema = new mongoose.Schema({
 });
 
 const dailyPlanSchema = new mongoose.Schema({
+  tripId: {
+    type: String,
+    required: true,
+  },
   date: {
     type: String,
     required: true,
@@ -32,4 +36,4 @@ const dailyPlanSchema = new mongoose.Schema({
 
 const DailyPlan = mongoose.model('DailyPlan', dailyPlanSchema);
 
-module.exports = DailyPlan;
+export default DailyPlan;

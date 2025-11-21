@@ -1,6 +1,5 @@
-import User from '../models/User.js';
 import { createUser, authenticateUser } from '../services/userService.js';
-import { handleError } from '../utils/responses.js';
+import { handleError, successResponse } from '../utils/responses.js';
 
 /**
  * Sign up a new user
@@ -9,10 +8,11 @@ import { handleError } from '../utils/responses.js';
  */
 export const signUp = async (req, res) => {
     try {
-        const user = await createUser(req.body);
-        res.status(201).json({ success: true, data: user, message: 'User created successfully' });
+        const useMockData = req.app.get('useMockData');
+        const user = await createUser(req.body, useMockData);
+        return successResponse(res, 201, user, 'User created successfully');
     } catch (error) {
-        handleError(res, error);
+        return handleError(res, error);
     }
 };
 
@@ -23,9 +23,10 @@ export const signUp = async (req, res) => {
  */
 export const logIn = async (req, res) => {
     try {
-        const user = await authenticateUser(req.body);
-        res.status(200).json({ success: true, data: user, message: 'User logged in successfully' });
+        const useMockData = req.app.get('useMockData');
+        const userData = await authenticateUser(req.body, useMockData);
+        return successResponse(res, 200, userData, 'User logged in successfully');
     } catch (error) {
-        handleError(res, error);
+        return handleError(res, error);
     }
 };

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { promisify } from 'util';
-import { constants } from '../config/constants.js';
+import { JWT_SECRET } from '../config/constants.js';
 
 const verifyToken = promisify(jwt.verify);
 
@@ -20,7 +20,7 @@ export const authMiddleware = async (req, res, next) => {
             });
         }
 
-        const decoded = await verifyToken(token, constants.JWT_SECRET);
+        const decoded = await verifyToken(token, JWT_SECRET);
         req.user = decoded;
         next();
     } catch (error) {
@@ -30,3 +30,5 @@ export const authMiddleware = async (req, res, next) => {
         });
     }
 };
+
+export default authMiddleware;
